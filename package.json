@@ -1,0 +1,11 @@
+{
+  "name": "proofline",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node seed.js",
+    "test": "node test-e2e.js"
+  }
+}

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PROOFLINE — Every brand decision should have a source</title>
+<style>
+  :root{
+    --ink:#14202e; --muted:#5a6b7d; --bg:#f7f5f0; --card:#ffffff; --line:#e5e0d8;
+    --accent:#0f6f77; --accent-d:#0a4f56; --red:#b42318; --amber:#b54708; --blue:#175cd3; --green:#027a48;
+    --radius:12px; --shadow:0 1px 2px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.05);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+  a{color:var(--accent)}
+  :focus-visible{outline:3px solid #7cc4c9;outline-offset:2px}
+  .topbar{position:sticky;top:0;z-index:20;background:#101b28;color:#e8edf2;display:flex;gap:16px;align-items:center;padding:12px 20px;flex-wrap:wrap}
+  .brand{font-weight:800;letter-spacing:.04em;font-size:18px}
+  .tagline{color:#9fb3c8;font-size:13px;font-style:italic}
+  .spacer{flex:1}
+  label{font-size:13px;color:#e8edf2}
+  select,button,input,textarea{font:inherit}
+  select,input,textarea{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff;color:var(--ink)}
+  button{border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:600}
+  button:hover{background:var(--accent-d)}
+  button.secondary{background:#fff;color:var(--ink);border-color:var(--line)}
+  button.secondary:hover{border-color:var(--accent)}
+  button.danger{background:var(--red);border-color:var(--red)}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  .layout{display:flex;min-height:calc(100vh - 57px)}
+  .sidenav{width:220px;background:#fff;border-right:1px solid var(--line);padding:16px 10px;flex-shrink:0}
+  .sidenav a{display:block;padding:9px 12px;border-radius:8px;color:var(--ink);text-decoration:none;font-weight:600;font-size:14px}
+  .sidenav a:hover,.sidenav a.active{background:#edf4f4;color:var(--accent-d)}
+  main{flex:1;padding:20px;max-width:1180px;width:100%}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+  .metric{font-size:30px;font-weight:800}
+  .muted{color:var(--muted);font-size:13px}
+  .pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid var(--line);background:#fff}
+  .pill.critical{background:#fef3f2;color:var(--red);border-color:#fecdca}
+  .pill.high{background:#fffaeb;color:var(--amber);border-color:#fedf89}
+  .pill.medium{background:#eff8ff;color:var(--blue);border-color:#b2ddff}
+  .pill.low,.pill.informational{background:#f2f4f7;color:var(--muted)}
+  .cat-CONTRADICTED{background:#fef3f2;color:var(--red)}
+  .cat-UNSUPPORTED,.cat-UNVERIFIED{background:#fffaeb;color:var(--amber)}
+  .cat-POLICY_VIOLATION{background:#fef3f2;color:var(--red)}
+  .cat-STYLE_SUGGESTION{background:#eff8ff;color:var(--blue)}
+  .cat-STALE{background:#f4ebff;color:#6941c6}
+  .cat-CONFLICTING{background:#eff8ff;color:var(--blue)}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+  .finding{border:1px solid var(--line);border-radius:var(--radius);background:#fff;padding:14px;margin:10px 0;box-shadow:var(--shadow)}
+  .finding summary{cursor:pointer;font-weight:700}
+  .evidence{background:#f9fafb;border-left:4px solid var(--accent);padding:10px;border-radius:6px;font-size:13px}
+  mark{padding:0 2px;border-radius:3px}
+  .sev-critical{background:#fecdca} .sev-high{background:#fedf89} .sev-medium{background:#b2ddff} .sev-low{background:#d1fadf}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media (max-width:820px){ .layout{flex-direction:column} .sidenav{width:100%;display:flex;overflow-x:auto;gap:4px} .two-col{grid-template-columns:1fr} }
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+</style>
+</head>
+<body>
+<div class="topbar" role="banner">
+  <span class="brand">PROOFLINE</span>
+  <span class="tagline">Every brand decision should have a source.</span>
+  <span class="spacer"></span>
+  <label>Workspace
+    <select id="workspaceSel" aria-label="Workspace">
+      <option value="ws_acme_cloud">Acme Cloud</option>
+    </select>
+  </label>
+  <label>Role
+    <select id="roleSel" aria-label="Role">
+      <option value="admin">Admin — Alex</option>
+      <option value="creator">Creator — Casey</option>
+      <option value="reviewer">Reviewer — Robin</option>
+    </select>
+  </label>
+</div>
+<div class="layout">
+  <nav class="sidenav" aria-label="Main navigation" id="nav">
+    <a href="#overview" data-page="overview">Overview</a>
+    <a href="#knowledge" data-page="knowledge">Brand Knowledge</a>
+    <a href="#preflight" data-page="preflight">Content Preflight</a>
+    <a href="#review" data-page="review">Review Queue</a>
+    <a href="#insights" data-page="insights">Governance Insights</a>
+    <a href="#audit" data-page="audit">Audit History</a>
+    <a href="#settings" data-page="settings">Settings</a>
+  </nav>
+  <main id="main" tabindex="-1"></main>
+</div>
+<script>
+const USERS = { admin: 'Alex (Admin)', creator: 'Casey (Creator)', reviewer: 'Robin (Reviewer)' };
+let state = { workspace: 'ws_acme_cloud', role: 'admin', auditQuery: '', knobFilter: 'all' };
+
+function headers() {
+  return { 'Content-Type': 'application/json', 'x-user': USERS[state.role], 'x-role': state.role, 'x-workspace': state.workspace };
+}
+async function api(method, path, body) {
+  const r = await fetch(path, { method, headers: headers(), body: body ? JSON.stringify(body) : undefined });
+  const t = await r.text(); let data; try { data = JSON.parse(t); } catch { data = { error: t }; }
+  if (!r.ok) throw new Error(data.error || ('HTTP ' + r.status));
+  return data;
+}
+const esc = (s) => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const sev = (s) => `<span class="pill ${s}">${s}</span>`;
+const cat = (s) => `<span class="pill cat-${s}">${s}</span>`;
+
+window.addEventListener('hashchange', route);
+document.querySelectorAll('#nav a').forEach(a => a.addEventListener('click', () => {
+  document.querySelectorAll('#nav a').forEach(x => x.classList.remove('active'));
+  a.classList.add('active');
+}));
+function route() {
+  const page = (location.hash || '#overview').replace('#','');
+  document.querySelectorAll('#nav a').forEach(x => x.classList.toggle('active', x.dataset.page === page));
+  ({ overview: renderOverview, knowledge: renderKnowledge, preflight: renderPreflight, review: renderReview,
+     insights: renderInsights, audit: renderAudit, settings: renderSettings }[page] || renderOverview)();
+}
+
+// ---------- Overview ----------
+async function renderOverview() {
+  main.innerHTML = '<p class="muted">Loading…</p>';
+  const d = await api('GET', '/api/overview');
+  main.innerHTML = `
+  <h1>Overview — Acme Cloud</h1>
+  <div class="grid">
+    <div class="card"><div class="metric">${d.total}</div><div class="muted">Total content submissions</div></div>
+    <div class="card"><div class="metric">${d.approved}</div><div class="muted">Approved</div></div>
+    <div class="card"><div class="metric">${d.needsChanges}</div><div class="muted">Needing changes</div></div>
+    <div class="card"><div class="metric">${d.openCritical}</div><div class="muted">Open critical findings</div></div>
+  </div>
+  <div class="two-col" style="margin-top:16px">
+    <div>
+      <h2>Content awaiting review</h2>
+      ${d.awaitingReview.length ? `<ul>${d.awaitingReview.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>` : '<p class="muted">None. Submit content from Content Preflight.</p>'}
+      <h2>Most frequent brand violations</h2>
+      ${d.topViolations.length ? `<table><tr><th>Category</th><th>Count</th></tr>${d.topViolations.map(v=>`<tr><td>${cat(v.category)}</td><td>${v.count}</td></tr>`).join('')}</table>` : '<p class="muted">No findings yet. Run a preflight to populate this.</p>'}
+    </div>
+    <div>
+      <h2>Recent activity</h2>
+      ${d.recentActivity.length ? `<ul>${d.recentActivity.map(e=>`<li><strong>${esc(e.event_type)}</strong> <span class="muted">${esc(e.actor)} · ${esc(e.created_at)}</span><br><span class="muted">${esc(e.detail)}</span></li>`).join('')}</ul>` : '<p class="muted">No activity yet.</p>'}
+    </div>
+  </div>`;
+}
+
+// ---------- Brand Knowledge ----------
+async function renderKnowledge() {
+  main.innerHTML = '<p class="muted">Loading…</p>';
+  const { items } = await api('GET', '/api/knowledge');
+  const docs = await api('GET', '/api/documents');
+  const pq = await api('GET', '/api/policy-quality');
+  const typeLabel = { voice:'Voice', terminology:'Terminology', fact:'Product fact', claim:'Claim / disclaimer' };
+  main.innerHTML = `
+  <h1>Brand Knowledge — source of truth</h1>
+  <p class="muted">Create, edit, approve, archive, or delete the approved rules, terms, facts, claims and disclaimers used by preflight. Nothing extracted or AI-generated becomes approved without human approval.</p>
+  <div class="toolbar">
+    <select id="kf" onchange="state.knobFilter=this.value;renderKnowledge()"><option value="all">All types</option><option value="voice">Voice</option><option value="terminology">Terminology</option><option value="fact">Facts</option><option value="claim">Claims &amp; disclaimers</option></select>
+  </div>
+  <div class="card">
+    <h2>Add knowledge item</h2>
+    <form id="kform">
+      <p><label>Type <select name="type" required><option value="voice">Voice rule</option><option value="terminology">Terminology</option><option value="fact">Product fact</option><option value="claim">Claim / disclaimer</option></select></label></p>
+      <p><label>Name <input name="name" required style="width:100%"></label></p>
+      <p><label>Status <select name="status"><option value="draft">draft</option><option value="pending">pending approval</option><option value="approved">approved</option><option value="archived">archived</option></select>
+         Severity <select name="severity"><option>critical</option><option>high</option><option selected>medium</option><option>low</option><option>informational</option></select></label></p>
+      <p><label>Approved value / preferred term / claim text <input name="approved_value" style="width:100%"></label></p>
+      <p><label>Forbidden term <input name="forbidden_term" style="width:100%"></label>
+         <label>Replacement <input name="replacement" style="width:100%"></label></p>
+      <p><label>Disclaimer text <input name="disclaimer_text" style="width:100%"></label>
+         <label>Claim type <select name="claim_type"><option value="">—</option><option value="approved">approved claim</option><option value="prohibited">prohibited</option><option value="required">required</option></select></label></p>
+      <p><label>Source / provenance <input name="source" required style="width:100%" placeholder="e.g. Pricing Sheet 2025-11"></label></p>
+      <p><label>Description <textarea name="description" style="width:100%"></textarea></label></p>
+      <p><button type="submit">Create item</button></p>
+    </form>
+  </div>
+  <div class="card" style="margin-top:14px"><h2>Policy quality</h2>
+    <p class="muted">Conflicting: ${pq.conflicting?.length||0} · Expired: ${pq.expired?.length||0} · Missing evidence: ${pq.missing?.length||0} · Drafts awaiting approval: ${pq.drafts?.length||0}</p>
+  </div>
+  <div class="card" style="margin-top:14px"><h2>Existing items</h2>
+    <table><tr><th>Type</th><th>Name</th><th>Status</th><th>Severity</th><th>Source</th><th>Actions</th></tr>
+    ${items.filter(i=>state.knobFilter==='all'||i.type===state.knobFilter).map(i=>`
+      <tr><td>${typeLabel[i.type]||i.type}</td><td><strong>${esc(i.name)}</strong><br><span class="muted">${esc(i.approved_value||i.preferred_term||i.claim_text||i.description||'')}</span></td>
+      <td>${i.status}</td><td>${sev(i.severity)}</td><td>${esc(i.source||'—')}</td>
+      <td>${['draft','pending'].includes(i.status)?`<button class="secondary" onclick="setStatus('${i.id}','approved')">Approve</button>`:''}
+          ${i.status==='approved'?`<button class="secondary" onclick="setStatus('${i.id}','archived')">Archive</button>`:''}
+          <button class="secondary" onclick="editItem('${i.id}')">Edit</button>
+          <button class="danger" onclick="delItem('${i.id}')">Delete</button></td></tr>`).join('')}
+    </table></div>
+  <div class="card" style="margin-top:14px"><h2>Source documents</h2>
+    <form id="dform"><p><label>Title <input name="title" required></label> <label>Text <textarea name="text" placeholder="Paste source text or upload text content" style="width:100%"></textarea></label></p>
+    <p><button type="submit">Add document &amp; extract candidates</button></p></form>
+    ${docs.documents.map(d=>`<p><strong>${esc(d.title)}</strong> <span class="pill">${d.status}</span><br><span class="muted">${esc(d.text.slice(0,160))}</span>${d.status==='pending'?`<br><button class="secondary" onclick="approveDoc('${d.id}')">Approve document &amp; extracted items</button>`:''}</p>`).join('')}
+    ${docs.items.length?`<h3>Extracted candidates (need human approval)</h3><ul>${docs.items.map(e=>`<li>[${e.type}] ${esc(e.name)} → ${esc(e.proposed)} <span class="pill">${e.status}</span></li>`).join('')}</ul>`:''}
+  </div>`;
+  document.getElementById('kform').addEventListener('submit', async (e) => {
+    e.preventDefault(); const f = Object.fromEntries(new FormData(e.target).entries());
+    try { await api('POST', '/api/knowledge', f); renderKnowledge(); } catch(err) { alert(err.message); }
+  });
+  document.getElementById('dform').addEventListener('submit', async (e) => {
+    e.preventDefault(); const f = Object.fromEntries(new FormData(e.target).entries());
+    try { await api('POST', '/api/documents', f); renderKnowledge(); } catch(err) { alert(err.message); }
+  });
+}
+window.setStatus = async (id, status) => { try { await api('PUT', '/api/knowledge/'+id, { status }); renderKnowledge(); } catch(e){ alert(e.message); } };
+window.delItem = async (id) => { try { await api('DELETE', '/api/knowledge/'+id); renderKnowledge(); } catch(e){ alert(e.message); } };
+window.editItem = async (id) => {
+  const { item } = await api('GET', '/api/knowledge/'+id);
+  const name = prompt('Name', item.name); if (name === null) return;
+  const source = prompt('Source / provenance', item.source || ''); if (source === null) return;
+  await api('PUT', '/api/knowledge/'+id, { name, source }); renderKnowledge();
+};
+window.approveDoc = async (id) => { try { await api('PUT', '/api/documents/'+id, { status: 'approved' }); renderKnowledge(); } catch(e){ alert(e.message); } };
+
+// ---------- Content Preflight ----------
+async function renderPreflight() {
+  const { submissions } = await api('GET', '/api/submissions');
+  const sel = submissions.map(s=>`<option value="${s.id}">${esc(s.title)} (${s.status})</option>`).join('');
+  main.innerHTML = `
+  <h1>Content Preflight</h1>
+  <p class="muted">Deterministic checks always run. AI semantic analysis runs only if a server provider key is configured — otherwise the UI states it is unavailable (never faked).</p>
+  <div class="toolbar"><label>Edit submission
+    <select id="subPick" onchange="loadDetail(this.value)"><option value="">— create new —</option>${sel}</select></label>
+  </div>
+  <div class="card"><h2>Content editor</h2>
+  <form id="cform">
+    <p><label>Title <input name="title" required style="width:100%"></label></p>
+    <p><label>Body <textarea name="body" required style="width:100%" rows="5"></textarea></label></p>
+    <p><label>Channel <select name="channel"><option>website</option><option>email</option><option>social media</option><option>advertisement</option><option>blog</option><option>press release</option></select></label>
+    <label>Audience <input name="audience"></label>
+    <label>Campaign <input name="campaign"></label>
+    <label>Language <input name="language" value="English"></label></p>
+    <p><button type="submit">Save draft</button>
+    <button type="button" id="runBtn" onclick="runPreflight()">Run preflight</button>
+    <button type="button" class="secondary" onclick="document.getElementById('body').value='Meet Acme Intelligence, currently available in early access. Explore how it can reduce manual reporting work. Plans start at ₹999/month. Availability may vary by plan.';alert('Safe copy loaded into the editor — Save draft, then Run preflight.')">Load safe rewrite</button></p>
+  </form></div>
+  <div id="results"></div>`;
+  document.querySelector('#cform [name="body"]').id = 'body';
+  document.getElementById('cform').addEventListener('submit', async (e) => {
+    e.preventDefault(); const f = Object.fromEntries(new FormData(e.target).entries());
+    try { const r = await api('POST', '/api/submissions', f); state.current = r.id; loadDetail(r.id); }
+    catch(err) { alert(err.message); }
+  });
+  if (submissions.length) { const p = document.getElementById('subPick'); p.value = submissions[0].id; loadDetail(submissions[0].id); }
+}
+async function loadDetail(id) {
+  if (!id) return;
+  const { submission } = await api('GET', '/api/submissions/'+id);
+  document.querySelector('#cform [name="title"]').value = submission.title;
+  document.getElementById('body').value = submission.body;
+  const f = await api('GET', '/api/submissions/'+id+'/findings');
+  state.current = id;
+  renderResults(submission, f);
+}
+async function runPreflight() {
+  const f = Object.fromEntries(new FormData(document.getElementById('cform')).entries());
+  if (!state.current) { const r = await api('POST', '/api/submissions', f); state.current = r.id; }
+  else await api('PUT', '/api/submissions/'+state.current, f);
+  try {
+    const r = await api('POST', '/api/submissions/'+state.current+'/preflight', {});
+    const f2 = await api('GET', '/api/submissions/'+state.current+'/findings');
+    const { submission } = await api('GET', '/api/submissions/'+state.current);
+    renderResults(submission, f2, r);
+  } catch(e) { alert(e.message); }
+}
+function renderResults(sub, f, runRes) {
+  const el = document.getElementById('results'); if (!el) return;
+  const counts = { critical:0, high:0, medium:0, low:0, informational:0 };
+  f.findings.forEach(x=>counts[x.severity]=(counts[x.severity]||0)+1);
+  el.innerHTML = `
+  <h2 id="findingsTitle">Preflight results</h2>
+  <div class="card">
+    <p><strong>Overall:</strong> ${f.findings.length ? f.findings.length+' finding(s) require attention' : 'No issues found'} · ${counts.critical} critical · ${counts.high} high · ${counts.medium} medium · ${counts.low} low</p>
+    <p class="muted">AI semantic analysis: ${runRes ? (runRes.ai_available?'ran (provider key configured)':'unavailable — deterministic checks only') : 'deterministic checks only (no provider key)'}. No unsupported claim is described as false without contradictory evidence.</p>
+    <h3>Content with highlighted findings</h3><p>${f.highlighted || '<span class="muted">Run preflight to highlight problem areas.</span>'}</p>
+  </div>
+  ${f.findings.map(finding => `
+  <details class="finding" id="fd-${finding.id}">
+    <summary>${sev(finding.severity)} ${cat(finding.category)} ${esc(finding.subject)}
+      — ${esc((finding.matched_text||'missing content').slice(0,60))}</summary>
+    <p>${esc(finding.explanation)}</p>
+    <p class="evidence"><strong>Evidence:</strong> ${esc(finding.evidence_excerpt)}${finding.evidence_id?` <span class="muted">(source ${finding.evidence_id})</span>`:''}</p>
+    <p><strong>Correction (${finding.correction_mode}):</strong> ${esc(finding.correction||'No automatic correction — revise or add an approved source.')}</p>
+    ${finding.correction ? `<p><button onclick="acceptFinding('${finding.id}', false)">Accept suggestion</button> <button class="secondary" onclick="editAccept('${finding.id}')">Edit then apply</button></p>`:''}
+    <p><input placeholder="Reason (required for reject / ignore / override)" id="reason-${finding.id}" style="width:60%">
+    <button class="secondary" onclick="rejectFinding('${finding.id}')">Reject</button>
+    <button class="secondary" onclick="ignoreFinding('${finding.id}')">Ignore</button>
+    <button class="secondary" onclick="falsePos('${finding.id}')">False positive</button>
+    <button class="secondary" onclick="overrideFinding('${finding.id}')">Override (reviewer)</button></p>
+  </details>`).join('')}
+  <div class="toolbar">
+    <button onclick="runPreflight()">Rescan revised content</button>
+    <button onclick="transition('${sub.id}','in_review')">Submit for review</button>
+  </div>`;
+}
+window.acceptFinding = async (fid, edit) => { try { await api('PUT', `/api/submissions/${state.current}/finding`, { finding_id: fid, action: 'accept' }); loadDetail(state.current); } catch(e){ alert(e.message); } };
+window.editAccept = async (fid) => {
+  const { findings } = await api('GET', `/api/submissions/${state.current}/findings`);
+  const f = findings.find(x=>x.id===fid); const text = prompt('Edit correction before applying', f.correction); if (text===null) return;
+  try { await api('PUT', `/api/submissions/${state.current}/finding`, { finding_id: fid, action: 'accept', edit: text }); loadDetail(state.current); } catch(e){ alert(e.message); }
+};
+const reasonOf = (fid) => (document.getElementById('reason-'+fid)?.value||'').trim();
+window.rejectFinding = async (fid) => { const r=reasonOf(fid); if(!r) return alert('Reason required'); try { await api('PUT', `/api/submissions/${state.current}/finding`, { finding_id: fid, action: 'reject', reason: r }); loadDetail(state.current); } catch(e){ alert(e.message); } };
+window.ignoreFinding = async (fid) => { const r=reasonOf(fid); if(!r) return alert('Reason required'); try { await api('PUT', `/api/submissions/${state.current}/finding`, { finding_id: fid, action: 'ignore', reason: r }); loadDetail(state.current); } catch(e){ alert(e.message); } };
+window.falsePos = async (fid) => { try { await api('PUT', `/api/submissions/${state.current}/finding`, { finding_id: fid, action: 'false_positive', reason: reasonOf(fid)||'flagged as false positive' }); loadDetail(state.current); } catch(e){ alert(e.message); } };
+window.overrideFinding = async (fid) => { const r=reasonOf(fid); if(!r) return alert('Override reason required'); try { await api('POST', `/api/submissions/${state.current}/finding`, { finding_id: fid, reason: r }); alert('Override recorded'); loadDetail(state.current); } catch(e){ alert(e.message); } };
+window.transition = async (id, to) => { try { await api('POST', `/api/submissions/${id}/transition`, { to }); loadDetail(id); } catch(e){ alert(e.message); } };
+
+// ---------- Review Queue ----------
+async function renderReview() {
+  const { submissions } = await api('GET', '/api/submissions');
+  main.innerHTML = `<h1>Review Queue</h1>
+  <table><tr><th>Title</th><th>Status</th><th>Channel</th><th>Updated</th><th>Actions</th></tr>
+  ${submissions.map(s=>`<tr><td><strong>${esc(s.title)}</strong><br><span class="muted">${s.id}</span></td><td><span class="pill">${s.status}</span></td>
+    <td>${esc(s.channel)}</td><td>${esc(s.updated_at)}</td>
+    <td>${['in_review','resubmitted'].includes(s.status)?`
+      <button onclick="reviewAct('${s.id}','approved')">Approve</button>
+      <button class="secondary" onclick="reviewAct('${s.id}','changes_requested')">Request changes</button>
+      <button class="danger" onclick="reviewAct('${s.id}','rejected')">Reject</button>`:''}
+      <button class="secondary" onclick="openComments('${s.id}')">Comments &amp; decisions</button></td></tr>`).join('')}
+  </table><div id="comments" style="margin-top:16px"></div>`;
+}
+window.reviewAct = async (id, to) => { try { await api('POST', `/api/submissions/${id}/transition`, { to, decision: to==='approved'?'Approved':(to==='changes_requested'?'Changes requested':'Rejected') }); renderReview(); } catch(e){ alert(e.message); } };
+window.openComments = async (id) => {
+  const d = await api('GET', `/api/submissions/${id}/comments`);
+  document.getElementById('comments').innerHTML = `<div class="card"><h3>Comments &amp; decisions for ${id}</h3>
+    <ul>${d.comments.map(c=>`<li><strong>${esc(c.author)}</strong>: ${esc(c.body)} <span class="muted">${esc(c.created_at)}</span></li>`).join('')||'<li class="muted">No comments yet.</li>'}</ul>
+    <ul>${d.decisions.map(x=>`<li>⚑ ${esc(x.decision)} by ${esc(x.reviewer)} — ${esc(x.note||'')}</li>`).join('')||''}</ul>
+    <ul>${d.overrides.map(o=>`<li>⚑ Override by ${esc(o.user_name)}: ${esc(o.reason)} (v${o.version})</li>`).join('')||''}</ul>
+    <p><input id="cmt" placeholder="Add comment" style="width:70%"> <button onclick="addComment('${id}')">Add comment</button></p></div>`;
+};
+window.addComment = async (id) => { const b = document.getElementById('cmt').value; if(!b.trim()) return; await api('POST', `/api/submissions/${id}/comment`, { body: b }); openComments(id); };
+
+// ---------- Insights ----------
+async function renderInsights() {
+  const d = await api('GET', '/api/insights');
+  main.innerHTML = `<h1>Governance Insights</h1>
+  <p class="muted">Derived from real stored findings and review events — no fabricated analytics.</p>
+  <div class="two-col">
+    <div class="card"><h2>Most common violations</h2>${d.mostCommon.length?`<ul>${d.mostCommon.map(m=>`<li><strong>${esc(m.subject)}</strong> — ${m.count} finding(s)</li>`).join('')}</ul>`:'<p class="muted">No findings yet.</p>'}</div>
+    <div class="card"><h2>Quality signals</h2>
+      <p>Expired facts: <strong>${d.expiredCount}</strong></p>
+      <p>Missing evidence: <strong>${d.missingEvidence.length}</strong></p>
+      <p>Conflicting rule names: <strong>${d.conflicting.length}</strong></p>
+      <p>Frequently overridden findings: <strong>${d.frequentlyOverridden}</strong></p>
+      <p>Flagged false positives: <strong>${d.falsePositives}</strong></p>
+      <p class="evidence"><strong>Suggested improvement (proposal):</strong> ${esc(d.proposal)}</p></div>
+  </div>
+  ${d.expired.length?`<div class="card" style="margin-top:14px"><h2>Expired facts to re-verify</h2><ul>${d.expired.map(f=>`<li>${esc(f.name)} — expired ${esc(f.expires_at)}</li>`).join('')}</ul></div>`:''}
+  ${d.draftAwaiting.length?`<div class="card" style="margin-top:14px"><h2>Drafts awaiting approval</h2><ul>${d.draftAwaiting.map(f=>`<li>${esc(f.name)}</li>`).join('')}</ul></div>`:''}`;
+}
+
+// ---------- Audit ----------
+async function renderAudit() {
+  const q = encodeURIComponent(state.auditQuery||'');
+  const d = await api('GET', '/api/audit?q='+q);
+  main.innerHTML = `<h1>Audit History</h1>
+  <div class="toolbar"><input id="aq" placeholder="Search audit events" value="${esc(state.auditQuery)}" onkeyup="if(event.key==='Enter'){state.auditQuery=this.value;renderAudit()}">
+  <button onclick="state.auditQuery=document.getElementById('aq').value;renderAudit()">Search</button></div>
+  <table><tr><th>Time</th><th>Actor</th><th>Role</th><th>Event</th><th>Detail</th></tr>
+  ${d.events.map(e=>`<tr><td>${esc(e.created_at)}</td><td>${esc(e.actor)}</td><td>${esc(e.actor_role)}</td><td><strong>${esc(e.event_type)}</strong></td><td>${esc(e.detail)}</td></tr>`).join('')||'<tr><td colspan="5" class="muted">No audit events yet.</td></tr>'}
+  </table>`;
+}
+
+// ---------- Settings ----------
+async function renderSettings() {
+  const { members } = await api('GET', '/api/members');
+  main.innerHTML = `<h1>Settings</h1>
+  <div class="card"><h2>Workspace: Acme Cloud</h2><p class="muted">Environment: production · Slug: acme-cloud</p></div>
+  <div class="card" style="margin-top:14px"><h2>Members &amp; roles</h2>
+  <table><tr><th>User</th><th>Role</th></tr>${members.map(m=>`<tr><td>${esc(m.user_name)}</td><td><span class="pill">${m.role}</span></td></tr>`).join('')}</table></div>
+  <div class="card" style="margin-top:14px"><h2>AI semantic analysis</h2>
+  <p class="muted">Server environment variable <code>OPENAI_API_KEY</code> is never exposed to the frontend. Without it, preflight runs deterministic checks only and the UI labels AI as unavailable. With it, the server adapter runs and returns findings marked "AI" — still without invented source citations.</p></div>`;
+}
+
+const main = document.getElementById('main');
+document.getElementById('workspaceSel').addEventListener('change', (e)=>{ state.workspace = e.target.value; route(); });
+document.getElementById('roleSel').addEventListener('change', (e)=>{ state.role = e.target.value; route(); });
+route();
+</script>
+</body>
+</html>
